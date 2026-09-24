@@ -1,0 +1,50 @@
+[1] LOAD DATA
+    1510 rows x 9 columns loaded
+    Columns: area_sqft, bedrooms, bathrooms, age_years, parking, distance_to_center_km, location, furnishing, price_lakhs
+
+[2] HANDLE MISSING VALUES & CLEAN
+    - Removed 10 duplicate rows
+    - Missing values found: area_sqft=66, bathrooms=61, location=62, furnishing=59
+    - Dropped 1 rows with missing/invalid price or area
+    - Numeric gaps -> median | categorical gaps -> most frequent value
+    - Removed 3 extreme price outliers (3 x IQR rule)
+    Clean dataset: 1496 rows
+
+[3] FEATURE ENGINEERING & ENCODING
+    - New features: total_rooms, area_per_bedroom, is_new (<=5 yrs), log_area
+    - furnishing -> ordinal (0/1/2) | location -> one-hot dummies (Rural = baseline)
+    - 16 features | Train 1196 / Test 300 (80/20), features standardised
+
+[EDA] Price summary (Rs. lakhs)
+    count    1496.00
+    mean       72.67
+    std        32.50
+    min        13.84
+    25%        48.32
+    50%        68.03
+    75%        91.49
+    max       207.52
+
+    Average price by location:
+      Rural            38.93
+      Outskirts        54.41
+      Suburb           66.25
+      IT Corridor      82.26
+      City Center     102.47
+      Coastal          95.26
+
+[4] TRAIN REGRESSION MODELS (5-fold cross-validation on training set)
+    - Linear Regression   CV R2 = 0.892
+    - Ridge Regression    CV R2 = 0.892
+    - Random Forest       CV R2 = 0.909
+    - Gradient Boosting   CV R2 = 0.925
+    Best model by CV: Gradient Boosting
+
+[5] EVALUATION ON UNSEEN TEST DATA
+    Model                     R2   MAE (lakh)   RMSE (lakh)
+    Linear Regression      0.888         8.30         11.10
+    Ridge Regression       0.888         8.30         11.10
+    Random Forest          0.903         6.96         10.29
+    Gradient Boosting      0.910         6.68          9.91  <- best
+
+    Gradient Boosting: explains 91.0% of price variation, typical error about Rs. 6.68 Lakh

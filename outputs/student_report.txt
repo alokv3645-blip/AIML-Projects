@@ -1,0 +1,46 @@
+[1] LOAD DATA
+    606 rows x 8 columns loaded
+    Columns: study_hours, attendance, previous_score, sleep_hours, assignments_completed, parental_support, extra_classes, final_marks
+
+[2] CLEAN & PREPROCESS
+    - Removed 6 duplicate rows
+    - Flagged 5 impossible values (e.g. attendance > 100%) as missing
+    - Missing values found: study_hours=15, attendance=19, sleep_hours=15, parental_support=19
+    - Dropped 0 rows with no target (final_marks)
+    - Filled numeric gaps with the median, categorical gaps with the mode
+    - Encoded categories: parental_support (Low/Medium/High -> 0/1/2), extra_classes (No/Yes -> 0/1)
+    - Created label 'passed' (final_marks >= 40)
+    Clean dataset: 600 rows
+
+[3] EXPLORATORY DATA ANALYSIS
+       study_hours  attendance  previous_score  sleep_hours  assignments_completed  final_marks
+count       600.00      600.00          600.00       600.00                 600.00       600.00
+mean          4.44       77.53           60.78         6.76                   5.14        46.81
+std           1.90       11.58           15.57         1.09                   3.14        10.03
+min           0.00       35.00           17.70         3.50                   0.00        15.10
+25%           3.10       70.47           51.10         6.00                   2.00        40.60
+50%           4.40       78.00           60.95         6.80                   5.00        46.95
+75%           5.60       85.12           71.03         7.50                   8.00        53.80
+max          10.30      100.00          100.00         9.90                  10.00        73.20
+
+    Correlation with final_marks:
+      Study Hours             +0.60
+      Previous Score          +0.47
+      Parental Support        +0.25
+      Assignments Completed   +0.21
+      Attendance              +0.19
+      Extra Classes           +0.11
+      Sleep Hours             +0.07
+
+    Pass rate: 76.8%
+
+[4] TRAIN / TEST SPLIT + FEATURE SCALING
+    Train: 480 rows | Test: 120 rows (stratified 80/20)
+    StandardScaler fitted on the training set only (prevents data leakage)
+
+[5] MODEL EVALUATION
+    Logistic Regression (Pass/Fail)
+      Accuracy  : 90.00%   (train: 83.96%)
+      Precision : 0.976   Recall: 0.891   F1: 0.932
+    Linear Regression (Final Marks)
+      R2 score  : 0.807   MAE: 3.48 marks   RMSE: 4.60
